@@ -1,3 +1,186 @@
+//Dummy JSON responses
+let data = [
+	{
+		response: {
+			results: {
+				win: 0,
+				symbolIDs: [2, 5, 2, 1],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 8,
+				symbolIDs: [5, 5, 5, 1],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 0,
+				symbolIDs: [0, 3, 1, 4],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 0,
+				symbolIDs: [5, 4, 1, 1],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 2,
+				symbolIDs: [1, 1, 5, 3],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 4,
+				symbolIDs: [2, 2, 2, 3],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 4,
+				symbolIDs: [5, 5, 2, 2],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 3,
+				symbolIDs: [2, 2, 3, 5],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 0,
+				symbolIDs: [4, 5, 3, 5],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 8,
+				symbolIDs: [5, 5, 5, 3],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 9,
+				symbolIDs: [3, 3, 3, 3],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 6,
+				symbolIDs: [4, 4, 4, 5],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 1,
+				symbolIDs: [0, 0, 3, 5],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 5,
+				symbolIDs: [1, 1, 1, 2],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 0,
+				symbolIDs: [2, 5, 2, 2],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 5,
+				symbolIDs: [2, 2, 2, 5],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 0,
+				symbolIDs: [4, 3, 0, 5],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 6,
+				symbolIDs: [3, 3, 3, 0],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 8,
+				symbolIDs: [2, 2, 2, 2],
+			},
+		},
+	},
+
+	{
+		response: {
+			results: {
+				win: 0,
+				symbolIDs: [0, 1, 5, 4],
+			},
+		},
+	},
+];
+
 // simple application configuration
 let config = { width: 1920, height: 1080 };
 
@@ -11,70 +194,128 @@ window.addEventListener('load', function () {
 	//Add the canvas that Pixi automatically created for you to the HTML document
 	document.body.appendChild(app.view);
 
-	// app.loader
-	// 	.add('spineCharacter', '../assets/symbols/symbol_00.json')
-	// 	.load(function (loader, resources) {
-	// 		var animation = new PIXI.spine.Spine(resources.spineCharacter.spineData);
+	// set balance
+	let balance = 100;
 
-	// 		// add the animation to the scene and render...
-	// 		app.stage.addChild(animation);
+	// set initial stake
+	let stake = 5;
 
-	// 		// run
-	// 		var animation = new PIXI.spine.Spine(spineBoyData);
-	// 		if (animation.state.hasAnimation('run')) {
-	// 			// run forever, little boy!
-	// 			animation.state.setAnimation(0, 'run', true);
-	// 			// dont run too fast
-	// 			animation.state.timeScale = 0.1;
-	// 		}
+	// Create button element
+	let button = document.createElement('button');
+	button.innerHTML = 'Spin!';
 
-	// 		app.start();
-	// 	});
+	// Create the balance display element with a template literal to display current balance
+	let displayBalance = document.createElement('div');
+	displayBalance.innerHTML = `Your balance is currently ${balance}`;
 
-	const symbol1 = PIXI.Sprite.from('../assets/symbols/symbol_00.png');
-	const symbol2 = PIXI.Sprite.from('../assets/symbols/symbol_01.png');
-	const symbol3 = PIXI.Sprite.from('../assets/symbols/symbol_02.png');
-	const symbol4 = PIXI.Sprite.from('../assets/symbols/symbol_03.png');
-	const symbol5 = PIXI.Sprite.from('../assets/symbols/symbol_04.png');
+	// Create the stake display element with a template literal to display current stake
+	let displayStake = document.createElement('div');
+	displayStake.innerHTML = `Your stake is currently ${stake}`;
 
-	// center the sprite's anchor point
-	symbol1.anchor.set(0.5);
-	symbol2.anchor.set(0.5);
-	symbol3.anchor.set(0.5);
-	symbol4.anchor.set(0.5);
-	symbol5.anchor.set(0.5);
+	// Create an input used to update the user stake, this only accepts numbers and has a minimum stake of 1
+	let changeStake = document.createElement('input');
+	changeStake.setAttribute('type', 'number');
+	changeStake.setAttribute('placeholder', 'enter your stake');
+	changeStake.setAttribute('min', 1);
 
-	symbol1.scale.set(0.2);
-	symbol2.scale.set(0.2);
-	symbol3.scale.set(0.2);
-	symbol4.scale.set(0.2);
-	symbol5.scale.set(0.2);
+	// create an object to store the multiple assets
+	let sprites = {};
 
-	// move the sprite to the center of the screen
-	symbol1.x = app.screen.width / 1.2;
-	symbol1.y = app.screen.height / 1.8;
+	// logic for Spin once button is clicked
+	button.onclick = function () {
+		// on click, disable both the button and change stake input
+		button.disabled = true;
+		changeStake.disabled = true;
 
-	symbol2.x = app.screen.width / 2;
-	symbol2.y = app.screen.height / 1.8;
+		// check that player has enough balance to play
+		if (balance > 0) {
+			// generate random whole number within range of responses and find corresponding win amount
+			let result =
+				data[Math.floor(Math.random() * data.length)].response.results;
+			let win = result.win;
+			balance = balance - stake;
 
-	symbol3.x = app.screen.width / 7;
-	symbol3.y = app.screen.height / 1.8;
+			// check if player wins or loses
+			if (win > 0) {
+				// if player won, add win amount to balance
+				let winnings = Number(stake) + Number(win);
+				balance = balance + win;
 
-	symbol4.x = app.screen.width / 4;
-	symbol4.y = app.screen.height / 3;
+				// animations results
+				let animations = result.symbolIDs;
+				console.log(animations);
+				app.stage.children.forEach((element) => {
+					console.log('before', app.stage);
+					app.stage.removeChild(element);
+					console.log(element);
+				});
+				console.log('after', app.stage);
 
-	symbol5.x = app.screen.width / 1.5;
-	symbol5.y = app.screen.height / 3;
+				// store variable for starting position on x access
+				let xpos = 16;
 
-	app.stage.addChild(symbol1);
-	app.stage.addChild(symbol2);
-	app.stage.addChild(symbol3);
-	app.stage.addChild(symbol4);
-	app.stage.addChild(symbol5);
+				// import the assets using the PIXI loader, iterate through to create texture, add positioning, scale and insert asset
+				app.loader
+					.add('0', '../assets/symbols/symbol_00.png')
+					.add('1', '../assets/symbols/symbol_01.png')
+					.add('2', '../assets/symbols/symbol_02.png')
+					.add('3', '../assets/symbols/symbol_03.png')
+					.add('4', '../assets/symbols/symbol_04.png')
+					.add('5', '../assets/symbols/symbol_05.png')
+					.load((loader, resources) => {})
+					.use((resource, next) => {
+						// iterate through results of spin to verify if asset appears, if so display the asset
+						animations.forEach((element) => {
+							if (resource.name == element) {
+								sprites[resource.name] = new PIXI.Sprite(resource.texture);
+								sprites[resource.name].y = config.height / 3;
+								sprites[resource.name].x = xpos;
+								sprites[resource.name].scale.set(0.2);
+								app.stage.addChild(sprites[resource.name]);
+								console.log('resource ' + resource.name + ' loaded');
+								xpos += 470;
+							}
+						});
+						next();
+					});
+				alert(`You have won ${winnings}`);
 
-	app.ticker.add(() => {
-		// just for fun, let's rotate mr rabbit a little
-		// bunny.rotation += 0.1;
-	});
-	// new PIXI.spine.Spine();
+				// if player lost, deduct stake from balance
+			} else {
+				alert(`You have lost ${stake}`);
+			}
+
+			// if player still has positive balance then update this figure and enable the spin button and stakes input
+			if (balance > 0) {
+				displayBalance.innerHTML = `Your balance is currently ${balance}`;
+				button.disabled = false;
+				changeStake.disabled = false;
+
+				// if player balance is 0 or below, alert user that they have run out of money
+			} else {
+				displayBalance.innerHTML = `Your balance is currently 0`;
+				alert('you have run out of money');
+			}
+
+			// this is a catch all if the player balance was for some reason 0 or below in the first instance
+		} else {
+			alert('you have run out of money');
+		}
+	};
+
+	// When the stake is changed it updates the value of the displayStake element
+	changeStake.onchange = function () {
+		stake = changeStake.value;
+		displayStake.innerHTML = `Your stake is currently ${stake}`;
+	};
+
+	// Create a container element for the user info including buttons and text elements.
+	let userInfo = document.createElement('div');
+	document.body.append(userInfo);
+
+	// insert all elements into the DOM
+	userInfo.appendChild(button);
+	userInfo.appendChild(displayBalance);
+	userInfo.appendChild(displayStake);
+	userInfo.appendChild(changeStake);
 });
