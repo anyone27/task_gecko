@@ -1,0 +1,37 @@
+html {
+    width: 100vw;
+    padding: 0;
+    margin: 0;
+
+}
+body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    padding: 20px;
+    border: 2px solid goldenrod;
+    border-radius: 10px;
+}
+
+.userInfo > div {
+    margin: 5px;
+}
+
+button {
+    margin: 10px;
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    background-color: goldenrod;
+    border-radius: 10px;
+    border: 2px silver solid;
+    box-shadow: 2px 5px 10px grey;
+}

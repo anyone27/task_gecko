@@ -194,6 +194,34 @@ window.addEventListener('load', function () {
 	//Add the canvas that Pixi automatically created for you to the HTML document
 	document.body.appendChild(app.view);
 
+	// create an object to store the multiple assets
+	let sprites = {};
+
+	// store variable for starting position on x access
+	let xpos = 16;
+
+	// import the assets using the PIXI loader, iterate through to create texture, add positioning, scale and insert asset
+	app.loader
+		.add('0', '../assets/symbols/symbol_00.png')
+		.add('1', '../assets/symbols/symbol_01.png')
+		.add('2', '../assets/symbols/symbol_02.png')
+		.add('3', '../assets/symbols/symbol_03.png')
+		.add('4', '../assets/symbols/symbol_04.png')
+		.add('5', '../assets/symbols/symbol_05.png')
+		.load((loader, resources) => {})
+		.use((resource, next) => {
+			// iterate through results of spin to verify if asset appears, if so display the asset
+			sprites[resource.name] = new PIXI.Sprite(resource.texture);
+			sprites[resource.name].y = config.height / 3;
+			sprites[resource.name].x = xpos;
+			sprites[resource.name].anchor.set(0.5);
+			sprites[resource.name].scale.set(0.2);
+			app.stage.addChild(sprites[resource.name]);
+			// console.log('resource ' + resource.name + ' loaded');
+			xpos += 350;
+			next();
+		});
+
 	// set balance
 	let balance = 100;
 
@@ -218,9 +246,6 @@ window.addEventListener('load', function () {
 	changeStake.setAttribute('placeholder', 'enter your stake');
 	changeStake.setAttribute('min', 1);
 
-	// create an object to store the multiple assets
-	let sprites = {};
-
 	// logic for Spin once button is clicked
 	button.onclick = function () {
 		// on click, disable both the button and change stake input
@@ -244,40 +269,14 @@ window.addEventListener('load', function () {
 				// animations results
 				let animations = result.symbolIDs;
 				console.log(animations);
-				app.stage.children.forEach((element) => {
-					console.log('before', app.stage);
-					app.stage.removeChild(element);
-					console.log(element);
-				});
-				console.log('after', app.stage);
 
-				// store variable for starting position on x access
-				let xpos = 16;
-
-				// import the assets using the PIXI loader, iterate through to create texture, add positioning, scale and insert asset
-				app.loader
-					.add('0', '../assets/symbols/symbol_00.png')
-					.add('1', '../assets/symbols/symbol_01.png')
-					.add('2', '../assets/symbols/symbol_02.png')
-					.add('3', '../assets/symbols/symbol_03.png')
-					.add('4', '../assets/symbols/symbol_04.png')
-					.add('5', '../assets/symbols/symbol_05.png')
-					.load((loader, resources) => {})
-					.use((resource, next) => {
-						// iterate through results of spin to verify if asset appears, if so display the asset
-						animations.forEach((element) => {
-							if (resource.name == element) {
-								sprites[resource.name] = new PIXI.Sprite(resource.texture);
-								sprites[resource.name].y = config.height / 3;
-								sprites[resource.name].x = xpos;
-								sprites[resource.name].scale.set(0.2);
-								app.stage.addChild(sprites[resource.name]);
-								console.log('resource ' + resource.name + ' loaded');
-								xpos += 470;
-							}
-						});
-						next();
+				animations.forEach((element) => {
+					// add rotation animation for selected assets
+					app.ticker.add(() => {
+						sprites[element].rotation += 0.05;
 					});
+				});
+
 				alert(`You have won ${winnings}`);
 
 				// if player lost, deduct stake from balance
@@ -312,6 +311,7 @@ window.addEventListener('load', function () {
 	// Create a container element for the user info including buttons and text elements.
 	let userInfo = document.createElement('div');
 	document.body.append(userInfo);
+	userInfo.className = 'userInfo';
 
 	// insert all elements into the DOM
 	userInfo.appendChild(button);
