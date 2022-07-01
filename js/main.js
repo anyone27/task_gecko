@@ -194,31 +194,26 @@ window.addEventListener('load', function () {
 	//Add the canvas that Pixi automatically created for you to the HTML document
 	document.body.appendChild(app.view);
 
-	// create an object to store the multiple assets
-	let sprites = {};
-
-	// store variable for starting position on x access
-	let xpos = 16;
+	// create an array to store the multiple assets
+	let sprites = [];
+	app.loader.baseUrl = '../assets/symbols';
 
 	// import the assets using the PIXI loader, iterate through to create texture, add positioning, scale and insert asset
 	app.loader
-		.add('0', '../assets/symbols/symbol_00.png')
-		.add('1', '../assets/symbols/symbol_01.png')
-		.add('2', '../assets/symbols/symbol_02.png')
-		.add('3', '../assets/symbols/symbol_03.png')
-		.add('4', '../assets/symbols/symbol_04.png')
-		.add('5', '../assets/symbols/symbol_05.png')
+		.add('0', 'symbol_00.png')
+		.add('1', 'symbol_01.png')
+		.add('2', 'symbol_02.png')
+		.add('3', 'symbol_03.png')
+		.add('4', 'symbol_04.png')
+		.add('5', 'symbol_05.png')
 		.load((loader, resources) => {})
 		.use((resource, next) => {
 			// iterate through results of spin to verify if asset appears, if so display the asset
 			sprites[resource.name] = new PIXI.Sprite(resource.texture);
-			sprites[resource.name].y = config.height / 3;
-			sprites[resource.name].x = xpos;
+			sprites[resource.name].y = config.height / 2;
+			sprites[resource.name].x = config.width / 2;
 			sprites[resource.name].anchor.set(0.5);
-			sprites[resource.name].scale.set(0.2);
-			app.stage.addChild(sprites[resource.name]);
-			// console.log('resource ' + resource.name + ' loaded');
-			xpos += 350;
+			// app.stage.addChild(sprites[resource.name]);
 			next();
 		});
 
@@ -251,6 +246,7 @@ window.addEventListener('load', function () {
 		// on click, disable both the button and change stake input
 		button.disabled = true;
 		changeStake.disabled = true;
+		app.stage.removeChildren();
 
 		// check that player has enough balance to play
 		if (balance > 0) {
@@ -268,14 +264,17 @@ window.addEventListener('load', function () {
 
 				// animations results
 				let animations = result.symbolIDs;
-				console.log(animations);
 
-				animations.forEach((element) => {
-					// add rotation animation for selected assets
-					app.ticker.add(() => {
-						sprites[element].rotation += 0.05;
-					});
+				let symbol = null;
+				let symbolCount = 0;
+
+				animations.forEach((item) => {
+					if (symbol === null) symbol = item;
+					if (symbol === item) {
+						symbolCount++;
+					}
 				});
+				app.stage.addChild(sprites[symbol]);
 
 				alert(`You have won ${winnings}`);
 
