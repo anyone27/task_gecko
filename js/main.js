@@ -265,8 +265,6 @@ window.addEventListener('load', function () {
 			// check if player wins or loses
 			if (win > 0) {
 				// if player won, add win amount to balance
-				// let winnings = Number(stake) + Number(win);
-
 				balance = balance + win + stake;
 
 				// find the winning symbols from the results data
@@ -288,7 +286,6 @@ window.addEventListener('load', function () {
 
 				// add the winning symbol to the stage. This should be multiple copies of the same sprite, however I am currently only able to render 1 of each asset.
 				for (let i = 0; i < symbolCount; i++) {
-					console.log(i);
 					app.stage.addChild(sprites[symbol]);
 					sprites[symbol].x = xpos;
 					xpos += 100;
