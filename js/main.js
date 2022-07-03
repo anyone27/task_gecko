@@ -196,9 +196,11 @@ window.addEventListener('load', function () {
 
 	// create an array to store the multiple assets
 	let sprites = [];
+
+	// set directory of assets telling PIXI where to look
 	app.loader.baseUrl = '../assets/symbols';
 
-	// import the assets using the PIXI loader, iterate through to create texture, add positioning, scale and insert asset
+	// import the assets using the PIXI loader, iterate through to create texture, add positioning, scale. Do not insert asset until the spin is complete.
 	app.loader
 		.add('0', 'symbol_00.png')
 		.add('1', 'symbol_01.png')
@@ -212,8 +214,8 @@ window.addEventListener('load', function () {
 			sprites[resource.name] = new PIXI.Sprite(resource.texture);
 			sprites[resource.name].y = config.height / 2;
 			sprites[resource.name].x = config.width / 2;
+			sprites[resource.name].scale.set(0.2);
 			sprites[resource.name].anchor.set(0.5);
-			// app.stage.addChild(sprites[resource.name]);
 			next();
 		});
 
@@ -246,6 +248,8 @@ window.addEventListener('load', function () {
 		// on click, disable both the button and change stake input
 		button.disabled = true;
 		changeStake.disabled = true;
+
+		// if any assets are already loaded, remove these from the stage
 		app.stage.removeChildren();
 
 		// check that player has enough balance to play
@@ -254,32 +258,51 @@ window.addEventListener('load', function () {
 			let result =
 				data[Math.floor(Math.random() * data.length)].response.results;
 			let win = result.win;
+
+			// deduct the stake from the balance
 			balance = balance - stake;
 
 			// check if player wins or loses
 			if (win > 0) {
 				// if player won, add win amount to balance
-				let winnings = Number(stake) + Number(win);
-				balance = balance + win;
+				// let winnings = Number(stake) + Number(win);
 
-				// animations results
+				balance = balance + win + stake;
+
+				// find the winning symbols from the results data
 				let animations = result.symbolIDs;
 
 				let symbol = null;
 				let symbolCount = 0;
 
+				// for each of the symbols in the results, count the item
+				// The idea here being that if a user gets 3 in a row, that should be the winning item. I couldn't quite see the pattern of the wins in the data so didn't follow through with this line of thinking. On occasion, 2 items in a row was counted as a win or two sets of 2 items.
 				animations.forEach((item) => {
 					if (symbol === null) symbol = item;
 					if (symbol === item) {
 						symbolCount++;
 					}
 				});
-				app.stage.addChild(sprites[symbol]);
 
-				alert(`You have won ${winnings}`);
+				let xpos = 400;
 
-				// if player lost, deduct stake from balance
+				// add the winning symbol to the stage. This should be multiple copies of the same sprite, however I am currently only able to render 1 of each asset.
+				for (let i = 0; i < symbolCount; i++) {
+					console.log(i);
+					app.stage.addChild(sprites[symbol]);
+					sprites[symbol].x = xpos;
+					xpos += 100;
+
+					// add simple animation to the asset, I couldn't get PIXI to accept the JSON/Atlas file types in order to implement the "win" animation.
+					app.ticker.add(() => {
+						sprites[symbol].rotation += 0.1;
+					});
+				}
+
+				// alert the player to the win and the win amount
+				alert(`You have won ${win}`);
 			} else {
+				// if player lost, tell them losing amount
 				alert(`You have lost ${stake}`);
 			}
 
@@ -289,7 +312,7 @@ window.addEventListener('load', function () {
 				button.disabled = false;
 				changeStake.disabled = false;
 
-				// if player balance is 0 or below, alert user that they have run out of money
+				// if player balance is 0 or below, set balance to 0 to avoid negative balance and alert user that they have run out of money
 			} else {
 				displayBalance.innerHTML = `Your balance is currently 0`;
 				alert('you have run out of money');
